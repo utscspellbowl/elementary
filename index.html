@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#fdf6ec">
 <title>Spelling Practice</title>
 <style>
+  /* ── Mobile-first base ── */
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
 
   :root {
@@ -378,6 +382,139 @@
     h1 { font-size: 2rem; }
     .big-word { font-size: 2.2rem; }
   }
+
+  /* ── Mobile & tablet responsive ───────────────────── */
+
+  /* Touch-friendly inputs and selects */
+  @media (max-width: 768px) {
+    body { padding: 16px 12px 60px; }
+
+    h1 { font-size: 2rem; }
+    .subtitle { font-size: 0.88rem; margin-bottom: 18px; }
+
+    .card { padding: 18px 16px; margin-bottom: 14px; border-radius: 14px; }
+
+    /* Stack all rows to single column on phone */
+    .row { flex-direction: column; gap: 12px; }
+    .field { min-width: unset; width: 100%; }
+
+    /* Larger tap targets */
+    input[type="number"],
+    select {
+      padding: 13px 14px;
+      font-size: 1rem;
+      min-height: 48px;
+    }
+
+    textarea { height: 120px; font-size: 0.9rem; }
+
+    /* Bigger checkboxes */
+    .checkbox-row input[type="checkbox"] { width: 24px; height: 24px; }
+    .checkbox-row label { font-size: 1rem; }
+
+    /* Buttons: full width on phone, large tap target */
+    .controls { flex-direction: column; align-items: stretch; }
+    .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 16px 20px;
+      font-size: 1.15rem;
+      min-height: 54px;
+    }
+    .btn-accent, .btn-repeat, .btn-pause, .btn-stop {
+      padding: 14px 20px;
+      font-size: 1rem;
+      min-height: 50px;
+    }
+
+    /* Practice stage */
+    .stage-card { padding: 24px 16px; }
+    .big-word { font-size: 2.6rem; min-height: 70px; }
+    .word-num { font-size: 0.8rem; }
+    .status-msg { font-size: 0.9rem; margin: 6px 0 16px; }
+
+    /* Letter tiles: slightly smaller on phone */
+    .letter-box { width: 38px; height: 46px; font-size: 1.3rem; border-radius: 8px; }
+
+    /* Progress bar more visible */
+    .progress-bar-wrap { height: 10px; margin-bottom: 20px; }
+
+    /* Pause overlay text */
+    .paused-overlay .pause-title { font-size: 2.2rem; }
+    .paused-overlay .pause-sub { font-size: 0.95rem; }
+    .paused-overlay .btn { width: auto; min-width: 180px; }
+  }
+
+  /* iPad / tablet — two column where sensible */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    body { padding: 24px 24px 60px; }
+    .card { max-width: 700px; }
+    #practice-area { max-width: 700px; }
+    .btn { min-height: 48px; }
+    input[type="number"], select { min-height: 46px; }
+  }
+
+  /* Prevent iOS zoom on input focus */
+  @media (max-width: 768px) {
+    input[type="number"], select, textarea {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Safe area insets for iPhone notch/home bar */
+  @supports (padding-bottom: env(safe-area-inset-bottom)) {
+    body { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
+  }
+
+  /* ── Voice diagnostic modal ── */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    padding: 24px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .modal-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: var(--primary);
+  }
+  .modal-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .voice-list {
+    overflow-y: auto;
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    font-family: monospace;
+    background: #fafafa;
+    line-height: 1.8;
+  }
+  .voice-local { color: #16a34a; font-weight: 700; }
+  .voice-remote { color: #888; }
+  .modal-close {
+    align-self: flex-end;
+  }
+  @media (max-width: 768px) {
+    .modal { padding: 18px 16px; max-height: 85vh; }
+  }
 </style>
 </head>
 <body>
@@ -457,6 +594,7 @@
     <div class="controls">
       <button class="btn btn-primary" onclick="startPractice()">▶ Start Practice</button>
       <button class="btn btn-accent" onclick="previewVoice()">🔊 Preview Voice</button>
+      <button class="btn btn-stop" style="font-size:0.9rem;padding:10px 18px;" onclick="showVoiceDiag()">🔍 Show All Voices</button>
     </div>
   </div>
 
@@ -482,6 +620,20 @@
       <button class="btn btn-repeat hidden" id="repeat-btn" onclick="repeatWord()">🔁 Repeat Word</button>
       <button class="btn btn-accent hidden" id="skip-btn" onclick="skipWord()">⏭ Skip Word</button>
     </div>
+  </div>
+</div>
+
+<!-- Voice diagnostic modal -->
+<div class="modal-backdrop hidden" id="voice-diag-modal" onclick="closeVoiceDiag(event)">
+  <div class="modal">
+    <div class="modal-title">🔍 Voices Safari Can See</div>
+    <div class="modal-sub">
+      <b style="color:#16a34a">Green = locally installed</b> (works offline, shows in app dropdown)<br>
+      <span style="color:#888">Grey = online/cloud only</span> (needs internet, filtered out of dropdown)<br><br>
+      If a voice you downloaded isn't green here, try closing Safari fully and reopening the app.
+    </div>
+    <div class="voice-list" id="voice-diag-list"></div>
+    <button class="btn btn-primary modal-close" onclick="closeVoiceDiagBtn()">Done</button>
   </div>
 </div>
 
@@ -973,6 +1125,40 @@
     setStatus('Skipping…');
     practiceLoop(abortController.signal).catch(() => {});
   }
+
+  // ── Voice diagnostic ──────────────────────────────────
+  function showVoiceDiag() {
+    const all = speechSynthesis.getVoices();
+    const english = all.filter(v => v.lang.startsWith('en'));
+    const pool = english.length ? english : all;
+
+    const list = document.getElementById('voice-diag-list');
+    if (!pool.length) {
+      list.innerHTML = '<span style="color:#e06a44">No voices found yet — wait a moment and try again.</span>';
+    } else {
+      list.innerHTML = pool.map(v => {
+        const cls = v.localService ? 'voice-local' : 'voice-remote';
+        const tag = v.localService ? '✓ local' : '☁ cloud';
+        return `<div class="${cls}">[${tag}] ${v.name} (${v.lang})</div>`;
+      }).join('');
+    }
+    document.getElementById('voice-diag-modal').classList.remove('hidden');
+  }
+
+  function closeVoiceDiag(e) {
+    if (e.target === document.getElementById('voice-diag-modal')) closeVoiceDiagBtn();
+  }
+  function closeVoiceDiagBtn() {
+    document.getElementById('voice-diag-modal').classList.add('hidden');
+  }
+
+  // Prevent 300ms tap delay and double-tap zoom on touch devices
+  document.addEventListener('touchend', function(e) {
+    if (e.target.classList.contains('btn')) {
+      e.preventDefault();
+      e.target.click();
+    }
+  }, { passive: false });
 </script>
 </body>
 </html>
