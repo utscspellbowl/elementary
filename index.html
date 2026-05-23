@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spelling Practice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #fdf6ec;
+    --card: #ffffff;
+    --primary: #f4845f;
+    --primary-dark: #e06a44;
+    --accent: #5bc0be;
+    --accent2: #a78bfa;
+    --text: #2d2d2d;
+    --muted: #888;
+    --border: #e8ddd0;
+    --shadow: 0 4px 24px rgba(244,132,95,0.13);
+    --radius: 18px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    background-image: radial-gradient(circle at 15% 10%, #fde8da 0%, transparent 40%),
+                      radial-gradient(circle at 85% 80%, #daf4f3 0%, transparent 40%);
+  }
+
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.6rem;
+    color: var(--primary);
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    max-width: 640px;
+    margin: 0 auto 20px;
+    border: 1.5px solid var(--border);
+  }
+
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--accent);
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  label {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  textarea {
+    width: 100%;
+    height: 140px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    resize: vertical;
+    color: var(--text);
+    background: #fafafa;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { outline: none; border-color: var(--primary); }
+
+  .row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .field { flex: 1; min-width: 120px; }
+
+  input[type="number"] {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    background: #fafafa;
+    transition: border-color 0.2s;
+  }
+  input[type="number"]:focus { outline: none; border-color: var(--primary); }
+
+  select {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    background: #fafafa;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  select:focus { outline: none; border-color: var(--accent); }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .checkbox-row input[type="checkbox"] {
+    width: 20px; height: 20px;
+    accent-color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .checkbox-row label {
+    margin: 0;
+    cursor: pointer;
+    text-transform: none;
+    font-size: 0.95rem;
+    color: var(--text);
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .word-count {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 16px rgba(244,132,95,0.35);
+  }
+  .btn-primary:hover { background: var(--primary-dark); }
+
+  .btn-stop {
+    background: #fff;
+    color: var(--primary);
+    border: 2.5px solid var(--primary);
+    box-shadow: none;
+  }
+  .btn-stop:hover { background: #fff5f2; }
+
+  .btn-accent {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 4px 16px rgba(91,192,190,0.3);
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+  .btn-accent:hover { background: #4aada9; }
+
+  .btn-repeat {
+    background: var(--accent2);
+    color: white;
+    box-shadow: 0 4px 16px rgba(167,139,250,0.3);
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+  .btn-repeat:hover { background: #9171f8; }
+
+  .btn-pause {
+    background: #fff;
+    color: #f59e0b;
+    border: 2.5px solid #f59e0b;
+    box-shadow: none;
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+  .btn-pause:hover { background: #fffbeb; }
+  .btn-pause.resumed {
+    color: #16a34a;
+    border-color: #16a34a;
+  }
+  .btn-pause.resumed:hover { background: #f0fdf4; }
+
+  .paused-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(253,246,236,0.92);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    font-family: 'Fredoka One', cursive;
+  }
+  .paused-overlay .pause-title {
+    font-size: 2.8rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  .paused-overlay .pause-sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
+
+  #practice-area {
+    display: none;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .stage-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  /* Flashcard mode gives the stage card a distinct teal accent border */
+  .stage-card.flashcard-active {
+    border-color: var(--accent);
+    box-shadow: 0 4px 32px rgba(91,192,190,0.18);
+  }
+
+  .mode-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    padding: 3px 12px;
+    border-radius: 99px;
+    margin-bottom: 14px;
+  }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 8px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  .word-num {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .big-word {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.2rem;
+    color: var(--primary);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 2px;
+    transition: opacity 0.3s;
+  }
+
+  .spelling-display {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-height: 64px;
+    align-items: center;
+    margin: 10px 0 6px;
+  }
+
+  .letter-box {
+    width: 44px;
+    height: 52px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 2px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: #0369a1;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .letter-box.show { opacity: 1; transform: translateY(0); }
+
+  .letter-box.capital {
+    background: linear-gradient(135deg, #fef9c3, #fef08a);
+    border-color: #fbbf24;
+    color: #92400e;
+  }
+  .letter-box.space-box {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-color: #86efac;
+    color: #166534;
+    font-size: 1rem;
+  }
+  .letter-box.punct-box {
+    background: linear-gradient(135deg, #fdf4ff, #fae8ff);
+    border-color: #d8b4fe;
+    color: #7e22ce;
+  }
+
+  .status-msg {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-weight: 600;
+    min-height: 28px;
+    margin: 8px 0 20px;
+  }
+
+  .countdown-ring {
+    display: inline-block;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 4px solid var(--border);
+    border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+    margin: 4px auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 2rem; }
+    .big-word { font-size: 2.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🌟 Spelling Practice</h1>
+<p class="subtitle">Read, wait, and spell it out!</p>
+
+<!-- Setup -->
+<div id="setup-area">
+
+  <div class="card">
+    <div class="card-title">📋 Your Word List</div>
+    <label for="word-input">Paste your words (one per line, or comma-separated)</label>
+    <textarea id="word-input" placeholder="apple&#10;banana&#10;celebrate&#10;St. John's&#10;..."></textarea>
+    <div class="word-count" id="word-count">0 words loaded</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">⚙️ Practice Settings</div>
+
+    <div class="row" style="margin-bottom:16px;">
+      <div class="field">
+        <label for="start-word">From word #</label>
+        <input type="number" id="start-word" value="1" min="1">
+      </div>
+      <div class="field">
+        <label for="end-word">To word #</label>
+        <input type="number" id="end-word" value="100" min="1">
+      </div>
+      <div class="field">
+        <label for="sample-size"># to test (0 = all)</label>
+        <input type="number" id="sample-size" value="0" min="0">
+      </div>
+      <div class="field">
+        <label for="delay-sec">Seconds before spelling</label>
+        <input type="number" id="delay-sec" value="5" min="1" max="60">
+      </div>
+    </div>
+
+    <div class="row" style="margin-bottom:16px;">
+      <div class="field">
+        <label for="voice-select">Voice</label>
+        <select id="voice-select"><option>Loading voices…</option></select>
+      </div>
+      <div class="field">
+        <label for="rate-select">Word reading speed</label>
+        <select id="rate-select">
+          <option value="0.75">Slow</option>
+          <option value="0.9" selected>Normal</option>
+          <option value="1.1">Fast</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-bottom:16px;">
+      <div class="field">
+        <label for="letter-speed">Letter spelling speed</label>
+        <select id="letter-speed">
+          <option value="900">Very Slow</option>
+          <option value="600" selected>Slow</option>
+          <option value="350">Normal</option>
+          <option value="150">Fast</option>
+        </select>
+      </div>
+      <div class="field" style="display:flex; flex-direction:column; gap:12px; justify-content:flex-end; padding-bottom:2px;">
+        <div class="checkbox-row">
+          <input type="checkbox" id="randomize">
+          <label for="randomize">Randomize word order</label>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="flashcard-mode">
+          <label for="flashcard-mode">Flash card mode</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" onclick="startPractice()">▶ Start Practice</button>
+      <button class="btn btn-accent" onclick="previewVoice()">🔊 Preview Voice</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Practice -->
+<div id="practice-area">
+  <div class="stage-card" id="stage-card">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div id="mode-badge" class="mode-badge hidden">🃏 Flash Card Mode</div>
+    <div class="word-num" id="word-num">Word 1 of 20</div>
+
+    <div class="big-word" id="big-word-display"></div>
+    <div class="countdown-ring hidden" id="countdown-ring"></div>
+    <div class="spelling-display" id="spelling-display"></div>
+    <div class="status-msg" id="status-msg">Get ready…</div>
+
+    <div class="controls" style="justify-content:center;">
+      <button class="btn btn-stop" onclick="stopPractice()">⏹ Stop</button>
+      <button class="btn btn-pause" id="pause-btn" onclick="togglePause()">⏸ Pause</button>
+      <button class="btn btn-repeat hidden" id="repeat-btn" onclick="repeatWord()">🔁 Repeat Word</button>
+      <button class="btn btn-accent hidden" id="skip-btn" onclick="skipWord()">⏭ Skip Word</button>
+    </div>
+  </div>
+</div>
+
+<!-- Paused overlay -->
+<div class="paused-overlay hidden" id="paused-overlay">
+  <div class="pause-title">⏸ Paused</div>
+  <div class="pause-sub">Press Resume whenever you're ready.</div>
+  <button class="btn btn-primary" onclick="togglePause()">▶ Resume</button>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────
+  let words = [];
+  let sessionWords = [];
+  let currentIdx = 0;
+  let practiceActive = false;
+  let abortController = null;
+  let currentWord = '';
+  let inCountdown = false;
+  let sessionVoice = null;   // locked at session start to prevent mid-session re-indexing
+  let isPaused = false;
+  let pauseResolve = null;   // called when user resumes
+
+  // ── Persist / restore ──────────────────────────────────
+  const wordInput   = document.getElementById('word-input');
+  const wordCountEl = document.getElementById('word-count');
+
+  function saveToStorage() {
+    try {
+      localStorage.setItem('spelling_words',        wordInput.value);
+      localStorage.setItem('spelling_start',        document.getElementById('start-word').value);
+      localStorage.setItem('spelling_end',          document.getElementById('end-word').value);
+      localStorage.setItem('spelling_delay',        document.getElementById('delay-sec').value);
+      localStorage.setItem('spelling_rate',         document.getElementById('rate-select').value);
+      localStorage.setItem('spelling_letter_speed', document.getElementById('letter-speed').value);
+      localStorage.setItem('spelling_randomize',    document.getElementById('randomize').checked);
+      localStorage.setItem('spelling_flashcard',    document.getElementById('flashcard-mode').checked);
+      localStorage.setItem('spelling_sample',       document.getElementById('sample-size').value);
+    } catch(e) {}
+  }
+
+  function loadFromStorage() {
+    try {
+      const saved = localStorage.getItem('spelling_words');
+      if (saved) {
+        wordInput.value = saved;
+        words = parseWords(saved);
+        wordCountEl.textContent = `${words.length} word${words.length !== 1 ? 's' : ''} loaded`;
+      }
+      const get = (key, el) => { const v = localStorage.getItem(key); if (v !== null) document.getElementById(el).value = v; };
+      get('spelling_start',        'start-word');
+      get('spelling_end',          'end-word');
+      get('spelling_delay',        'delay-sec');
+      get('spelling_rate',         'rate-select');
+      get('spelling_sample',       'sample-size');
+      get('spelling_letter_speed', 'letter-speed');
+      const rand  = localStorage.getItem('spelling_randomize');
+      const flash = localStorage.getItem('spelling_flashcard');
+      if (rand  !== null) document.getElementById('randomize').checked     = (rand  === 'true');
+      if (flash !== null) document.getElementById('flashcard-mode').checked = (flash === 'true');
+    } catch(e) {}
+  }
+
+  wordInput.addEventListener('input', () => {
+    words = parseWords(wordInput.value);
+    wordCountEl.textContent = `${words.length} word${words.length !== 1 ? 's' : ''} loaded`;
+    document.getElementById('end-word').value = Math.min(20, words.length) || 20;
+    saveToStorage();
+  });
+
+  ['start-word','end-word','sample-size','delay-sec','rate-select','letter-speed','randomize','flashcard-mode'].forEach(id => {
+    document.getElementById(id).addEventListener('change', saveToStorage);
+  });
+
+  loadFromStorage();
+
+  // ── Word helpers ───────────────────────────────────────
+  function parseWords(text) {
+    return text.split(/[\n,]+/).map(w => w.trim()).filter(Boolean);
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // ── Voices ─────────────────────────────────────────────
+  const voiceSelect = document.getElementById('voice-select');
+
+  // Voices available on all Windows licences (no Microsoft 365 / cloud required).
+  // Includes the classic desktop voices (David, Zira, Mark) and any voice the browser
+  // reports as locally-installed (localService: true), which covers basic Windows 10/11
+  // voices that don't need an internet connection or premium licence.
+  const BASIC_VOICE_NAMES = [
+    'microsoft david', 'microsoft zira', 'microsoft mark',
+    'microsoft hazel', 'microsoft susan', 'microsoft george',  // UK basic
+    'microsoft linda', 'microsoft richard', 'microsoft sean',  // other regions
+  ];
+
+  function isBasicVoice(v) {
+    const nameLower = v.name.toLowerCase();
+    // Always include if locally installed (works offline, no premium needed)
+    if (v.localService) return true;
+    // Include known basic Microsoft desktop voices by name
+    if (BASIC_VOICE_NAMES.some(n => nameLower.includes(n.replace('microsoft ', '')))) return true;
+    return false;
+  }
+
+  function populateVoices() {
+    const allVoices = speechSynthesis.getVoices();
+    const english   = allVoices.filter(v => v.lang.startsWith('en'));
+    const pool      = english.length ? english : allVoices;
+
+    // Try to limit to basic/local voices; fall back to full list if none qualify
+    const basic = pool.filter(isBasicVoice);
+    const list  = basic.length ? basic : pool;
+
+    voiceSelect.innerHTML = '';
+    list.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = v.name + ' (' + v.lang + ')';
+      // Prefer Zira (female, clear) then David as defaults
+      if (v.name.toLowerCase().includes('zira')) opt.selected = true;
+      voiceSelect.appendChild(opt);
+    });
+
+    // Store full voice list separately so lockSessionVoice can still find by name
+    voiceSelect._voicePool = list;
+  }
+
+  speechSynthesis.onvoiceschanged = populateVoices;
+  populateVoices();
+
+  function getSelectedVoice() {
+    // During a session use the locked voice (by name, immune to re-indexing)
+    if (sessionVoice) {
+      const match = speechSynthesis.getVoices().find(v => v.name === sessionVoice.name);
+      if (match) return match;
+    }
+    const pool = voiceSelect._voicePool || speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+    return pool[parseInt(voiceSelect.value)] || null;
+  }
+
+  function lockSessionVoice() {
+    const pool = voiceSelect._voicePool || speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+    sessionVoice = pool[parseInt(voiceSelect.value)] || null;
+  }
+
+  function getWordRate()   { return parseFloat(document.getElementById('rate-select').value); }
+  function getLetterGap()  { return parseInt(document.getElementById('letter-speed').value); }
+  function isFlashcard()   { return document.getElementById('flashcard-mode').checked; }
+
+  function previewVoice() {
+    speak('Hello! I will read your spelling words and then spell them out for you.', getWordRate());
+  }
+
+  // ── Speech ─────────────────────────────────────────────
+  function speak(text, rate) {
+    return new Promise(resolve => {
+      speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.voice  = getSelectedVoice();
+      utter.rate   = rate ?? getWordRate();
+      utter.pitch  = 1;
+      utter.onend  = resolve;
+      utter.onerror = resolve;
+      speechSynthesis.speak(utter);
+    });
+  }
+
+  // ── Timing ─────────────────────────────────────────────
+  function sleep(ms, signal) {
+    return new Promise((resolve, reject) => {
+      const t = setTimeout(resolve, ms);
+      signal?.addEventListener('abort', () => {
+        clearTimeout(t);
+        reject(new DOMException('Aborted', 'AbortError'));
+      });
+    });
+  }
+
+  // ── UI helpers ─────────────────────────────────────────
+  function setStatus(msg)        { document.getElementById('status-msg').textContent = msg; }
+  function showSpinner(show)     { document.getElementById('countdown-ring').classList.toggle('hidden', !show); }
+  function setRepeatVisible(show){ document.getElementById('repeat-btn').classList.toggle('hidden', !show); }
+
+  function showBigWord(w) {
+    const el = document.getElementById('big-word-display');
+    el.textContent = w;
+    el.style.opacity = 1;
+  }
+  function hideBigWord() { document.getElementById('big-word-display').textContent = ''; }
+
+  function updateProgress() {
+    const pct = (currentIdx / sessionWords.length) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('word-num').textContent =
+      `Word ${currentIdx + 1} of ${sessionWords.length}`;
+  }
+
+  // ── Smart tokeniser ────────────────────────────────────
+  function tokeniseWord(word) {
+    const tokens = [];
+    for (const ch of word) {
+      if      (ch === ' ')        tokens.push({ display: '⎵', say: 'space',      cls: 'space-box' });
+      else if (ch === '-')        tokens.push({ display: '-', say: 'dash',       cls: 'punct-box' });
+      else if (ch === "'")        tokens.push({ display: "'", say: 'apostrophe', cls: 'punct-box' });
+      else if (ch === '.')        tokens.push({ display: '.', say: 'period',     cls: 'punct-box' });
+      else if (ch === ',')        tokens.push({ display: ',', say: 'comma',      cls: 'punct-box' });
+      else if (/[A-Z]/.test(ch)) tokens.push({ display: ch,  say: 'capital ' + ch.toLowerCase(), cls: 'capital' });
+      else                        tokens.push({ display: ch,  say: ch,            cls: '' });
+    }
+    return tokens;
+  }
+
+  function showLetters(tokens) {
+    const container = document.getElementById('spelling-display');
+    container.innerHTML = '';
+    tokens.forEach((tok, i) => {
+      const box = document.createElement('div');
+      box.className = 'letter-box' + (tok.cls ? ' ' + tok.cls : '');
+      box.textContent = typeof tok.display === 'string' ? tok.display.toUpperCase() : tok.display;
+      container.appendChild(box);
+      setTimeout(() => box.classList.add('show'), i * 200);
+    });
+  }
+
+  function clearLetters() { document.getElementById('spelling-display').innerHTML = ''; }
+
+  // ── Spell-out helper (shared by both modes) ────────────
+  async function spellOut(word, signal) {
+    const tokens = tokeniseWord(word);
+    showLetters(tokens);
+    for (const tok of tokens) {
+      await speakPauseable(tok.say, 0.85);
+      await sleepPauseable(getLetterGap(), signal);
+    }
+    clearLetters();
+  }
+
+  // ── Normal practice mode ───────────────────────────────
+  async function runWordNormal(word, signal) {
+    currentWord = word;
+    clearLetters();
+    hideBigWord();
+    showSpinner(false);
+    setRepeatVisible(false);
+
+    // Say the word twice
+    setStatus('Listen carefully…');
+    await speakPauseable(word, getWordRate());
+    await sleepPauseable(600, signal);
+    await speakPauseable(word, getWordRate());
+
+    // Countdown
+    const delaySec = parseInt(document.getElementById('delay-sec').value);
+    showSpinner(true);
+    setRepeatVisible(true);
+    inCountdown = true;
+    setStatus(`Write it down — you have ${delaySec} second${delaySec !== 1 ? 's' : ''}…`);
+    await sleepPauseable(delaySec * 1000, signal);
+    inCountdown = false;
+    setRepeatVisible(false);
+    showSpinner(false);
+
+    // Spell it out
+    setStatus("Now let's spell it:");
+    showBigWord(word);
+    await spellOut(word, signal);
+
+    // Say full word once more
+    await sleepPauseable(400, signal);
+    showBigWord(word);
+    await speakPauseable(word, getWordRate());
+    setStatus('✓ Next word coming up…');
+    await sleepPauseable(1400, signal);
+  }
+
+  // ── Flash card mode ────────────────────────────────────
+  async function runWordFlashcard(word, signal) {
+    currentWord = word;
+    clearLetters();
+    showSpinner(false);
+    setRepeatVisible(false);
+
+    // Always show the word
+    showBigWord(word);
+
+    // Round 1: read word → spell → brief pause
+    setStatus('Round 1 — listen and follow along:');
+    await speakPauseable(word, getWordRate());
+    await sleepPauseable(400, signal);
+    setStatus('Spelling:');
+    await spellOut(word, signal);
+    await sleepPauseable(300, signal);
+
+    // Say word again after first spell
+    showBigWord(word);
+    await speakPauseable(word, getWordRate());
+    await sleepPauseable(600, signal);
+
+    // Round 2: read word again → spell again
+    setStatus('Round 2 — one more time:');
+    await speakPauseable(word, getWordRate());
+    await sleepPauseable(400, signal);
+    setStatus('Spelling again:');
+    await spellOut(word, signal);
+    await sleepPauseable(300, signal);
+
+    // Final read
+    showBigWord(word);
+    await speakPauseable(word, getWordRate());
+    setStatus('✓ Next word coming up…');
+    await sleepPauseable(1400, signal);
+  }
+
+  // ── Practice loop ──────────────────────────────────────
+  async function practiceLoop(signal) {
+    const flashcard = isFlashcard();
+    for (let i = currentIdx; i < sessionWords.length; i++) {
+      if (signal.aborted) break;
+      currentIdx = i;
+      updateProgress();
+      if (flashcard) {
+        await runWordFlashcard(sessionWords[i], signal);
+      } else {
+        await runWordNormal(sessionWords[i], signal);
+      }
+    }
+
+    if (!signal.aborted) {
+      currentIdx = sessionWords.length;
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('word-num').textContent = 'All done!';
+      clearLetters();
+      document.getElementById('big-word-display').textContent = '🎉';
+      showSpinner(false);
+      setRepeatVisible(false);
+      document.getElementById('skip-btn').classList.add('hidden');
+      setStatus('');
+      await speak('Great job! You finished all your spelling words!', getWordRate());
+    }
+  }
+
+  // ── Repeat word (normal mode countdown only) ───────────
+  function repeatWord() {
+    if (!currentWord) return;
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(currentWord);
+    utter.voice = getSelectedVoice();
+    utter.rate  = getWordRate();
+    utter.pitch = 1;
+    speechSynthesis.speak(utter);
+  }
+
+  // ── Controls ───────────────────────────────────────────
+  function startPractice() {
+    words = parseWords(wordInput.value);
+    if (!words.length) { alert('Please paste your word list first!'); return; }
+
+    const start = Math.max(1, parseInt(document.getElementById('start-word').value)) - 1;
+    const end   = Math.min(words.length, parseInt(document.getElementById('end-word').value));
+    if (start >= end) { alert('Please check your word range — start must be less than end.'); return; }
+
+    sessionWords = words.slice(start, end);
+    if (document.getElementById('randomize').checked) sessionWords = shuffle(sessionWords);
+
+    // Optionally limit to a random sample within the range
+    const sampleSize = parseInt(document.getElementById('sample-size').value) || 0;
+    if (sampleSize > 0 && sampleSize < sessionWords.length) {
+      // If not already randomized, shuffle a copy to pick the sample
+      const pool = document.getElementById('randomize').checked ? sessionWords : shuffle([...sessionWords]);
+      sessionWords = pool.slice(0, sampleSize);
+    }
+
+    currentIdx = 0;
+    lockSessionVoice();   // freeze voice choice for the whole session
+
+    // Apply flashcard styling
+    const fc = isFlashcard();
+    document.getElementById('stage-card').classList.toggle('flashcard-active', fc);
+    document.getElementById('mode-badge').classList.toggle('hidden', !fc);
+    // Hide delay setting label in flashcard mode (it's unused)
+    document.getElementById('repeat-btn').classList.add('hidden');
+
+    document.getElementById('setup-area').style.display   = 'none';
+    document.getElementById('practice-area').style.display = 'block';
+    document.getElementById('skip-btn').classList.remove('hidden');
+
+    abortController = new AbortController();
+    practiceActive  = true;
+    practiceLoop(abortController.signal).catch(() => {});
+  }
+
+  // ── Pause / resume ────────────────────────────────────
+  function togglePause() {
+    if (!isPaused) {
+      // Pause
+      isPaused = true;
+      speechSynthesis.cancel();
+      document.getElementById('paused-overlay').classList.remove('hidden');
+      const pb = document.getElementById('pause-btn');
+      pb.textContent = '▶ Resume';
+      pb.classList.add('resumed');
+    } else {
+      // Resume
+      isPaused = false;
+      document.getElementById('paused-overlay').classList.add('hidden');
+      const pb = document.getElementById('pause-btn');
+      pb.textContent = '⏸ Pause';
+      pb.classList.remove('resumed');
+      if (pauseResolve) { pauseResolve(); pauseResolve = null; }
+    }
+  }
+
+  // Wrap sleep so it also waits if paused
+  async function sleepPauseable(ms, signal) {
+    await sleep(ms, signal);
+    // After sleeping, check if we're paused and wait for resume
+    if (isPaused) {
+      await new Promise((resolve, reject) => {
+        pauseResolve = resolve;
+        signal?.addEventListener('abort', () => {
+          pauseResolve = null;
+          reject(new DOMException('Aborted', 'AbortError'));
+        });
+      });
+    }
+  }
+
+  // Wrap speak so it waits for resume after finishing if paused mid-word
+  async function speakPauseable(text, rate) {
+    if (isPaused) {
+      // Wait for resume before speaking
+      await new Promise((resolve, reject) => {
+        pauseResolve = resolve;
+      });
+    }
+    await speak(text, rate);
+    if (isPaused) {
+      await new Promise((resolve, reject) => {
+        pauseResolve = resolve;
+      });
+    }
+  }
+
+  function stopPractice() {
+    if (isPaused) {
+      isPaused = false;
+      if (pauseResolve) { pauseResolve(); pauseResolve = null; }
+      document.getElementById('paused-overlay').classList.add('hidden');
+    }
+    if (abortController) abortController.abort();
+    speechSynthesis.cancel();
+    practiceActive = false;
+    inCountdown    = false;
+    sessionVoice   = null;
+    const pb = document.getElementById('pause-btn');
+    pb.textContent = '⏸ Pause';
+    pb.classList.remove('resumed');
+    document.getElementById('setup-area').style.display   = 'block';
+    document.getElementById('practice-area').style.display = 'none';
+    document.getElementById('stage-card').classList.remove('flashcard-active');
+  }
+
+  function skipWord() {
+    if (isPaused) {
+      isPaused = false;
+      if (pauseResolve) { pauseResolve(); pauseResolve = null; }
+      document.getElementById('paused-overlay').classList.add('hidden');
+      const pb = document.getElementById('pause-btn');
+      pb.textContent = '⏸ Pause';
+      pb.classList.remove('resumed');
+    }
+    if (abortController) abortController.abort();
+    speechSynthesis.cancel();
+    inCountdown = false;
+    currentIdx  = Math.min(currentIdx + 1, sessionWords.length - 1);
+    abortController = new AbortController();
+    clearLetters();
+    hideBigWord();
+    showSpinner(false);
+    setRepeatVisible(false);
+    setStatus('Skipping…');
+    practiceLoop(abortController.signal).catch(() => {});
+  }
+</script>
+</body>
+</html>
